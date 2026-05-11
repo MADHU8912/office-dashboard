@@ -1,19 +1,95 @@
 services:
 
   backend:
+
     build: ./backend
+
     container_name: office-dashboard-backend
+
+    restart: always
+
     ports:
       - "5000:5000"
+
     env_file:
       - ./backend/.env
 
+    volumes:
+      - ./backend/uploads:/app/uploads
+
+    networks:
+      - office-network
+
   frontend:
+
     build: ./frontend
+
     container_name: office-dashboard-frontend
+
+    restart: always
+
     ports:
       - "3000:3000"
+
     stdin_open: true
+
     tty: true
+
     depends_on:
       - backend
+
+    networks:
+      - office-network
+
+  mongo:
+
+    image: mongo
+
+    container_name: office-dashboard-mongo
+
+    restart: always
+
+    ports:
+      - "27017:27017"
+
+    volumes:
+      - mongo-data:/data/db
+
+    networks:
+      - office-network
+
+  prometheus:
+
+    image: prom/prometheus
+
+    container_name: office-dashboard-prometheus
+
+    restart: always
+
+    ports:
+      - "9090:9090"
+
+    networks:
+      - office-network
+
+  grafana:
+
+    image: grafana/grafana
+
+    container_name: office-dashboard-grafana
+
+    restart: always
+
+    ports:
+      - "3001:3000"
+
+    networks:
+      - office-network
+
+volumes:
+
+  mongo-data:
+
+networks:
+
+  office-network:
