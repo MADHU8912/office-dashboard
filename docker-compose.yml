@@ -1,9 +1,8 @@
-version: '3'
-
 services:
 
   backend:
     build: ./backend
+    container_name: office-dashboard-backend
     ports:
       - "5000:5000"
     env_file:
@@ -11,5 +10,10 @@ services:
 
   frontend:
     build: ./frontend
+    container_name: office-dashboard-frontend
     ports:
       - "3000:3000"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend

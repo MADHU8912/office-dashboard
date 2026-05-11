@@ -2,9 +2,15 @@ pipeline {
 
     agent any
 
+    tools {
+        nodejs 'nodejs'
+    }
+
     environment {
-        DOCKER_IMAGE_BACKEND = "office-dashboard-backend"
-        DOCKER_IMAGE_FRONTEND = "office-dashboard-frontend"
+
+        BACKEND_IMAGE = "office-dashboard-backend"
+        FRONTEND_IMAGE = "office-dashboard-frontend"
+
     }
 
     stages {
@@ -20,18 +26,7 @@ pipeline {
 
         }
 
-        stage('Check Node Version') {
-
-            steps {
-
-                bat 'node -v'
-                bat 'npm -v'
-
-            }
-
-        }
-
-        stage('Backend Install') {
+        stage('Install Backend') {
 
             steps {
 
@@ -45,7 +40,7 @@ pipeline {
 
         }
 
-        stage('Frontend Install') {
+        stage('Install Frontend') {
 
             steps {
 
@@ -59,7 +54,7 @@ pipeline {
 
         }
 
-        stage('Frontend Build') {
+        stage('Build Frontend') {
 
             steps {
 
@@ -73,17 +68,7 @@ pipeline {
 
         }
 
-        stage('Docker Compose Build') {
-
-            steps {
-
-                bat 'docker compose build'
-
-            }
-
-        }
-
-        stage('Stop Old Containers') {
+        stage('Docker Stop') {
 
             steps {
 
@@ -93,7 +78,17 @@ pipeline {
 
         }
 
-        stage('Run Docker Containers') {
+        stage('Docker Build') {
+
+            steps {
+
+                bat 'docker compose build'
+
+            }
+
+        }
+
+        stage('Docker Start') {
 
             steps {
 
@@ -107,7 +102,7 @@ pipeline {
 
             steps {
 
-                bat 'docker ps -a'
+                bat 'docker ps'
 
             }
 
@@ -117,7 +112,7 @@ pipeline {
 
             steps {
 
-                bat 'docker logs office-dashboard-backend-1'
+                bat 'docker logs office-dashboard-backend'
 
             }
 
@@ -129,13 +124,13 @@ pipeline {
 
         success {
 
-            echo 'Pipeline Build Success'
+            echo 'CI/CD Pipeline Success'
 
         }
 
         failure {
 
-            echo 'Pipeline Build Failed'
+            echo 'Pipeline Failed'
 
         }
 
