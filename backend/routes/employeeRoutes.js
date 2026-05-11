@@ -1,16 +1,93 @@
-const express = require("express");
-const router = express.Router();
-const Employee = require("../models/Employee");
+const mongoose = require("mongoose");
 
-router.post("/add", async (req, res) => {
-    const employee = new Employee(req.body);
-    await employee.save();
-    res.json(employee);
+const EmployeeSchema = new mongoose.Schema({
+
+    name: {
+        type: String,
+        required: true
+    },
+
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+
+    password: {
+        type: String,
+        required: true
+    },
+
+    role: {
+        type: String,
+        enum: ['admin', 'employee'],
+        default: 'employee'
+    },
+
+    department: {
+        type: String,
+        default: 'IT'
+    },
+
+    project: {
+        type: String,
+        default: ''
+    },
+
+    task: {
+        type: String,
+        default: ''
+    },
+
+    taskStatus: {
+        type: String,
+        enum: ['Pending', 'In Progress', 'Completed'],
+        default: 'Pending'
+    },
+
+    progress: {
+        type: Number,
+        default: 0
+    },
+
+    attendance: {
+        type: String,
+        enum: ['Present', 'Absent', 'Leave'],
+        default: 'Present'
+    },
+
+    phone: {
+        type: String,
+        default: ''
+    },
+
+    address: {
+        type: String,
+        default: ''
+    },
+
+    profileImage: {
+        type: String,
+        default: ''
+    },
+
+    uploadedFiles: [{
+        type: String
+    }],
+
+    notifications: [{
+        message: String,
+        date: {
+            type: Date,
+            default: Date.now
+        }
+    }],
+
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+
 });
 
-router.get("/", async (req, res) => {
-    const employees = await Employee.find();
-    res.json(employees);
-});
-
-module.exports = router;
+module.exports = mongoose.model("Employee", EmployeeSchema);
